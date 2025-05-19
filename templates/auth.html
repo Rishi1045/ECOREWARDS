@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Tailwind CSS CDN -->
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+    .btn-hover:hover {
+        transform: scale(1.05);
+        transition: transform 0.3s ease-in-out;
+    }
+    .input-focus:focus {
+        border-color: #34D399;
+        box-shadow: 0 0 10px rgba(52, 211, 153, 0.5);
+        transition: all 0.3s ease-in-out;
+    }
+    body {
+        background: linear-gradient(135deg, #E0F7FA 0%, #A7F3D0 100%);
+    }
+    .error-message {
+        color: #EF4444;
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+    }
+</style>
+<div class="min-h-screen flex flex-col justify-center items-center p-4">
+    {% if not is_login %}
+    <!-- Signup Section -->
+    <div id="signup" class="w-full max-w-md bg-white rounded-xl shadow-lg p-8 mb-6">
+        <h1 class="text-3xl font-bold text-center text-gray-800 mb-4">Join Eco Rewards 🌱</h1>
+        <p class="text-center text-gray-600 mb-6">Start your journey to a greener planet!</p>
+        <div class="flex justify-center mb-6">
+            <img src="static/images/logo1.png" alt="Eco Logo" class="w-20 h-20 rounded-full">
+        </div>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+                        <span class="block sm:inline">{{ message }}</span>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        <form method="POST" action="{{ url_for('signup') }}" id="signupForm">
+            <div class="mb-4">
+                <label for="signup-username" class="block text-sm font-medium text-gray-700">Username</label>
+                <input type="text" id="signup-username" name="name" class="mt-1 w-full p-3 border border-gray-300 rounded-lg input-focus" placeholder="Enter your username" required>
+            </div>
+            <div class="mb-4">
+                <label for="signup-email" class="block text-sm font-medium text-gray-700">Email</label>
+                <input type="email" id="signup-email" name="email" class="mt-1 w-full p-3 border border-gray-300 rounded-lg input-focus" placeholder="Enter your email" required>
+            </div>
+            <div class="mb-4">
+                <label for="signup-password" class="block text-sm font-medium text-gray-700">Password</label>
+                <input type="password" id="signup-password" name="password" class="mt-1 w-full p-3 border border-gray-300 rounded-lg input-focus" placeholder="Create a password" required minlength="6">
+                <p class="text-sm text-gray-500 mt-1">Password must be at least 6 characters long</p>
+            </div>
+            <div class="mb-6">
+                <label for="signup-confirm-password" class="block text-sm font-medium text-gray-700">Confirm Password</label>
+                <input type="password" id="signup-confirm-password" name="confirm_password" class="mt-1 w-full p-3 border border-gray-300 rounded-lg input-focus" placeholder="Confirm your password" required>
+                <p id="password-match-error" class="error-message hidden">Passwords do not match</p>
+            </div>
+            <button type="submit" class="w-full bg-green-500 text-white p-3 rounded-lg font-semibold btn-hover">Sign Up</button>
+        </form>
+        <p class="text-center text-sm text-gray-600 mt-4">Already have an account? <a href="{{ url_for('login') }}" class="text-blue-600 hover:underline">Log in</a></p>
+    </div>
+    {% else %}
+    <!-- Login Section -->
+    <div id="login" class="w-full max-w-md bg-white rounded-xl shadow-lg p-8">
+        <h1 class="text-3xl font-bold text-center text-gray-800 mb-4">Welcome Back! 🌟</h1>
+        <p class="text-center text-gray-600 mb-6">Continue making a difference!</p>
+        <div class="flex justify-center mb-6">
+            <img src="static/images/logo1.png" alt="Eco Logo" class="w-20 h-20 rounded-full">
+        </div>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+                        <span class="block sm:inline">{{ message }}</span>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        <form method="POST" action="{{ url_for('login') }}">
+            <div class="mb-4">
+                <label for="login-email" class="block text-sm font-medium text-gray-700">Email</label>
+                <input type="email" id="login-email" name="email" class="mt-1 w-full p-3 border border-gray-300 rounded-lg input-focus" placeholder="Enter your email" required>
+            </div>
+            <div class="mb-6">
+                <label for="login-password" class="block text-sm font-medium text-gray-700">Password</label>
+                <input type="password" id="login-password" name="password" class="mt-1 w-full p-3 border border-gray-300 rounded-lg input-focus" placeholder="Enter your password" required>
+            </div>
+            <button type="submit" class="w-full bg-blue-600 text-white p-3 rounded-lg font-semibold btn-hover">Log In</button>
+        </form>
+        <p class="text-center text-sm text-gray-600 mt-4">Don't have an account? <a href="{{ url_for('signup') }}" class="text-green-600 hover:underline">Sign up</a></p>
+    </div>
+    {% endif %}
+    <!-- Footer -->
+    <footer class="mt-8 text-center text-gray-600">
+        <p>©️ 2025 Eco Rewards. Let's make the planet greener together! 🌍</p>
+    </footer>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const signupForm = document.getElementById('signupForm');
+    const password = document.getElementById('signup-password');
+    const confirmPassword = document.getElementById('signup-confirm-password');
+    const passwordMatchError = document.getElementById('password-match-error');
+
+    if (signupForm) {
+        signupForm.addEventListener('submit', function(e) {
+            if (password.value !== confirmPassword.value) {
+                e.preventDefault();
+                passwordMatchError.classList.remove('hidden');
+                confirmPassword.classList.add('border-red-500');
+            } else {
+                passwordMatchError.classList.add('hidden');
+                confirmPassword.classList.remove('border-red-500');
+            }
+        });
+
+        confirmPassword.addEventListener('input', function() {
+            if (password.value !== confirmPassword.value) {
+                passwordMatchError.classList.remove('hidden');
+                confirmPassword.classList.add('border-red-500');
+            } else {
+                passwordMatchError.classList.add('hidden');
+                confirmPassword.classList.remove('border-red-500');
+            }
+        });
+    }
+});
+</script>
+{% endblock %} 

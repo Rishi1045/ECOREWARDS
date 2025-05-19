@@ -1,0 +1,683 @@
+{% extends "base.html" %}
+{% block content %}
+
+<head>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <style>
+    #leaflet-map { height: 250px; width: 100%; border-radius: 10px; margin-top: 1rem; }
+  </style>
+</head>
+
+<style>
+  :root {
+    --primary-color: #2E7D32;
+    --secondary-color: #81C784;
+    --accent-color: #FFC107;
+    --text-color: #333333;
+    --light-bg: #F5F5F5;
+    --white: #FFFFFF;
+  }
+
+  .container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+
+  .header {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: var(--white);
+    padding: 2rem 0;
+    margin-bottom: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  .header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+
+  .header p {
+    font-size: 1.2rem;
+    text-align: center;
+    opacity: 0.9;
+  }
+
+  .classy_frame {
+    background: var(--white);
+    border-radius: 15px;
+    padding: 2rem !important;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+  }
+
+  .classy_frame:hover {
+    transform: translateY(-5px);
+  }
+
+  .upload-container {
+    position: relative;
+    margin: 2rem 0;
+    background: var(--light-bg);
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  #preview {
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+  }
+
+  #preview:hover {
+    transform: scale(1.02);
+  }
+
+  .image-upload {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255, 255, 255, 0.95);
+    padding: 1.5rem;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(5px);
+    border: 2px solid var(--primary-color);
+  }
+
+  .image-upload p {
+    color: var(--primary-color);
+    font-weight: 500;
+    margin-bottom: 1rem;
+  }
+
+  .image-upload img {
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 0.5rem;
+    background: var(--light-bg);
+    border-radius: 50%;
+  }
+
+  .image-upload img:hover {
+    transform: scale(1.1);
+    background: var(--primary-color);
+  }
+
+  .classify-button {
+    background: var(--primary-color);
+    color: var(--white);
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 50px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  .classify-button:hover {
+    background: var(--secondary-color);
+    transform: translateY(-2px);
+  }
+
+  .result-container {
+    background: var(--white);
+    padding: 3rem;
+    border-radius: 15px;
+    margin-top: 2rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    border: 2px solid var(--primary-color);
+  }
+
+  .result-badge {
+    background: var(--accent-color);
+    color: var(--text-color);
+    padding: 1rem 2rem;
+    border-radius: 50px;
+    font-weight: bold;
+    display: inline-block;
+    margin: 1.5rem 0;
+    font-size: 1.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .result-details {
+    font-size: 1.2rem;
+    line-height: 1.8;
+    color: var(--text-color);
+    margin-top: 2rem;
+    padding: 2rem;
+    background: var(--light-bg);
+    border-radius: 10px;
+  }
+
+  .upload-instructions {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: var(--primary-color);
+    font-size: 1.2rem;
+  }
+
+  .upload-icon-container {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-top: 1rem;
+  }
+
+  .upload-icon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .upload-icon:hover {
+    transform: translateY(-5px);
+  }
+
+  .upload-icon img {
+    width: 60px;
+    height: 60px;
+    padding: 1rem;
+    background: var(--light-bg);
+    border-radius: 50%;
+    margin-bottom: 0.5rem;
+    transition: all 0.3s ease;
+  }
+
+  .upload-icon:hover img {
+    background: var(--primary-color);
+  }
+
+  .upload-icon span {
+    color: var(--primary-color);
+    font-weight: 500;
+  }
+
+  .video-section {
+    margin-top: 3rem;
+  }
+
+  .video-container {
+    background: var(--white);
+    padding: 1.5rem;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  .video-title {
+    color: var(--primary-color);
+    margin-bottom: 1.5rem;
+    font-size: 1.8rem;
+  }
+
+  .quote-card {
+    background: var(--light-bg);
+    padding: 2rem;
+    border-radius: 15px;
+    margin: 1rem 0;
+    text-align: center;
+    font-style: italic;
+  }
+
+  @media (max-width: 768px) {
+    .container {
+      padding: 1rem;
+    }
+    
+    .header h1 {
+      font-size: 2rem;
+    }
+    
+    .classy_frame {
+      margin-bottom: 2rem;
+    }
+  }
+
+  .big-btn {
+    font-size: 1.5rem !important;
+    padding: 1.2rem 3rem !important;
+    border-radius: 60px !important;
+    letter-spacing: 1px;
+    font-weight: 700;
+    box-shadow: 0 6px 18px rgba(46,125,50,0.15);
+  }
+
+  #realtime-btn {
+    position: fixed;
+    bottom: 100px;
+    right: 32px;
+    z-index: 9998;
+    background: #009688;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    font-size: 2.1rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  #realtime-btn:hover {
+    background: #00796b;
+  }
+  #realtime-btn-label {
+    position: absolute;
+    right: 70px;
+    bottom: 18px;
+    background: #009688;
+    color: #fff;
+    padding: 8px 18px;
+    border-radius: 18px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+    display: none;
+  }
+  #realtime-btn:hover + #realtime-btn-label {
+    display: block;
+  }
+</style>
+
+<div class="container">
+  <div class="header">
+    <h1>Smart Waste Classification</h1>
+    <p>Help make our planet cleaner by properly sorting your waste</p>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6 classy_frame">
+      <h3 class="text-center mb-4">Classify Your Waste Material</h3>
+      <div class="upload-container">
+        <div class="upload-instructions">
+          <p>Upload an image of your waste material for classification</p>
+        </div>
+        <img id="preview" src="static/images/waste.png" alt="Waste Preview">
+      </div>
+      <div style="width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+        <div class="image-upload" style="position: static; margin: 2rem 0 0 0; background: none; box-shadow: none; border: none; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 0.5rem; width: auto; text-align: center;">
+          <div class="upload-icon" onclick="document.getElementById('file').click()">
+            <img id="upload-web" src="{{ url_for('static', filename = 'images/upload.png') }}" alt="Upload"/>
+            <span style="font-size:1.5rem; color:#2E7D32; font-weight:700;">Upload Image</span>
+          </div>
+          <input type="file" name="file" id="file" onchange="previewImage()" class="d-none">
+        </div>
+      </div>
+      <div class="text-center" style="margin-top: 2.5rem;">
+        <button class="classify-button big-btn" onclick="classifyWaste()">
+          <i class="fas fa-magic mr-2"></i>Classify Waste
+        </button>
+      </div>
+    </div>
+
+    <div class="col-md-6 classy_frame" id="about">
+      <h3 class="text-center mb-4">About</h3>
+      <div class="result-container">
+        <h4>The Earth produces a staggering 3.5 million tons of garbage daily, a tally that's only growing, making it vital to stay mindful of our waste habits.<br><br>
+          This application guides you in breaking down your trash into nine distinct material types, tackling the tricky and often inefficient sorting process at recycling plants.<br><br>
+          Imagine if we all took the time to distribute our waste into nine designated bins by material—it would transform the workload for sanitation crews and boost recycling effectiveness. Currently, about 70% of refuse goes unrecycled due to poor sorting practices.<br><br>
+          Such a habit could drastically cut down landfill overflow, reduce pollution, and conserve precious resources for future generations. It's a small effort with outsized rewards, empowering individuals to drive real change. With every sorted item, we'd lessen environmental strain, support local ecosystems, and build a cleaner, greener world one bin at a time.<br><br>
+          Beyond efficiency, this shift in behavior could spark a broader cultural change, inspiring communities to rethink consumption and waste.<br>
+        </h4>
+      </div>
+    </div>
+  </div>
+
+  <div class="row" id="motivation">
+    <div class="col-12">
+      <div class="video-container">
+        <h3 class="text-center mb-4">Find Local Recycling Centers & Bulk Pickup</h3>
+        <div class="row">
+          <div class="col-md-6 mb-4">
+            <div class="result-container">
+              <h4>📍 Geo-Tagging & Local Recycling Suggestions</h4>
+              <button class="classify-button" onclick="getLocation()">Find Nearby Centers</button>
+              <div id="location-status" style="margin-top:1rem;"></div>
+              <div id="recycling-centers" style="margin-top:1rem;"></div>
+              <div id="leaflet-map" style="display:none;"></div>
+            </div>
+          </div>
+          <div class="col-md-6 mb-4">
+            <div class="result-container">
+              <h4>📦 Bulk Waste Pickup Request</h4>
+              <form id="pickup-form" onsubmit="return submitPickupRequest();">
+                <div class="form-group">
+                  <label for="pickup-address">Pickup Address</label>
+                  <input type="text" class="form-control" id="pickup-address" required placeholder="Enter your address">
+                </div>
+                <div class="form-group">
+                  <label for="waste-type">Type of Waste</label>
+                  <select class="form-control" id="waste-type" required>
+                    <option value="">Select type</option>
+                    <option>Bulk Household</option>
+                    <option>Hazardous</option>
+                    <option>E-waste</option>
+                    <option>Other</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="pickup-date">Preferred Pickup Date</label>
+                  <input type="date" class="form-control" id="pickup-date" required>
+                </div>
+                <button type="submit" class="classify-button" style="margin-top:1rem;">Request Pickup</button>
+                <div id="pickup-success" style="margin-top:1rem;color:var(--primary-color);font-weight:bold;"></div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row video-section" id="recycling-videos">
+    <div class="col-12">
+      <h3 id="video-title" class="video-title text-center"></h3>
+    </div>
+    <div class="col-md-6">
+      <div class="video-container">
+        <div class="embed-responsive embed-responsive-16by9">
+          <iframe id="video1" class="embed-responsive-item" src="https://www.youtube.com/embed/zO3jFKiqmHo" allowfullscreen></iframe>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="video-container">
+        <div class="embed-responsive embed-responsive-16by9">
+          <iframe id="video2" class="embed-responsive-item" src="https://www.youtube.com/embed/I_fUpP-hq3A" allowfullscreen></iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row" id="what-if">
+    <div class="col-md-6">
+      <div class="video-container">
+        <h2 class="text-center mb-4">What If We Stopped Recycling?</h2>
+        <div class="embed-responsive embed-responsive-16by9">
+          <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/8fFJOzXxB54" allowfullscreen></iframe>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="video-container">
+        <h2 class="text-center mb-4">What If We Created No Waste?</h2>
+        <div class="embed-responsive embed-responsive-16by9">
+          <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/wWbL7Mv2MFw" allowfullscreen></iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row" id="quotes">
+    <div class="col-md-6">
+      <div class="quote-card">
+        <h4>They don't dive into the swimming pool, they dive into the mud. We can't even imagine how they would feel.</h4>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="quote-card">
+        <h4>Your one step to waste recycling can make a cleaner's life 10 minutes better.</h4>
+      </div>
+    </div>
+  </div>
+</div>
+
+<a href="{{ url_for('realtime') }}" id="realtime-btn" title="Realtime Classification">🎥</a>
+<span id="realtime-btn-label">Realtime Classification</span>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+  var imgData;
+  var loading = document.getElementById("loading");
+  var whatif = document.getElementById("what-if");
+  var motivation = document.getElementById("motivation");
+  var quotes = document.getElementById("quotes");
+  var recyclingvideos = document.getElementById("recycling-videos");
+
+  whatif.style.display = "none";
+  motivation.style.display = "none";
+  quotes.style.display = "none";
+  recyclingvideos.style.display = "none";
+  
+  function previewImage(){
+    var file = document.getElementById("file").files;
+    if(file.length>0){
+      var fileName = file[0].name;
+      var allowed_extensions = new Array("jpeg", "jpg","png");
+      var file_extension = fileName.split('.').pop().toLowerCase(); 
+
+      if(allowed_extensions[0] == file_extension || allowed_extensions[1] == file_extension || allowed_extensions[2] == file_extension){
+        var imgObj = document.getElementById("preview");
+        var fileReader = new FileReader();
+
+        fileReader.onload = function(event){
+          document.getElementById("preview").setAttribute("src", event.target.result);
+          imgData = event.target.result;
+        };
+
+        fileReader.readAsDataURL(file[0]);
+      }
+      else{
+        document.getElementById("file").value = "";
+        document.getElementById("errorTitle").innerHTML = "Error - Only Image File Acceptable";
+        document.getElementById("errorMessage").innerHTML = "We only accept image with .jpeg .jpg or .png extensions.";
+        $("#errorPopup").modal("show");
+      }
+    }
+  }
+
+  function classifyWaste(){
+    var file = document.getElementById("file").files;
+    if(file.length > 0){
+      loading.style.display = "block";
+      whatif.style.display = "block";
+      motivation.style.display = "block";
+      quotes.style.display = "block";
+      recyclingvideos.style.display = "block";
+
+      var form_data = new FormData();
+      form_data.append("file", document.getElementById("file").files[0]);
+      $.ajax({
+        url: 'classifywaste',
+        dataType: 'json',
+        cache: false,
+        contentType: false,
+        processData: false,
+        data: form_data,
+        type: 'post',
+        success: function (data) {
+          var predicted_value = data["predicted_value"];
+          var details = data["details"];
+          var video1 = data["video1"];
+          var video2 = data["video2"];
+
+          var about = document.getElementById("about");
+          var videotitle = document.getElementById("video-title");
+
+          about.innerHTML = `
+            <h3 class="text-center mb-4">Classification Result</h3>
+            <div class="result-container">
+              <div class="text-center">
+                <span class="result-badge">${predicted_value}</span>
+              </div>
+              <div class="result-details">
+                ${details}
+              </div>
+            </div>
+          `;
+          
+          videotitle.innerHTML = `How ${predicted_value} Recycling Works?`;
+
+          document.getElementById("video1").setAttribute("src", "https://www.youtube.com/embed/" + video1);
+          document.getElementById("video2").setAttribute("src", "https://www.youtube.com/embed/" + video2);
+
+          loading.style.display = "none";
+        }
+      });
+    }
+    else{
+      document.getElementById("errorTitle").innerHTML = "Error - Image not uploaded";
+      document.getElementById("errorMessage").innerHTML = "Please upload image of your waste material.";
+      $("#errorPopup").modal("show");
+    }
+  }
+
+  // Geo-Tagging and Local Recycling Center Suggestions
+  function getLocation() {
+    var status = document.getElementById('location-status');
+    var centersDiv = document.getElementById('recycling-centers');
+    var mapDiv = document.getElementById('leaflet-map');
+    status.innerHTML = 'Getting your location...';
+    centersDiv.innerHTML = `
+      <b>Search Results</b>
+      <div style="max-height: 220px; overflow-y: auto; margin-top: 1rem;">
+        <div style="margin-bottom: 1.2rem;">
+          <strong>Suritex Pvt Ltd - Electronic Waste Recyclers</strong><br>
+          <span>3.9 (19) · Recycling center</span><br>
+          <span>Admn Office 5&6, Zal Complex, Residency Rd, opp. SFS school, above Roast café</span><br>
+          <span>Open ⋅ Closes 7 pm · <a href="tel:09049981347">090499 81347</a></span><br>
+          <span style="color: #2E7D32; font-weight: 500;">And the great part is they buy these waste @ ₹15/Kg.</span><br>
+          <a href="#" style="color:#1976d2;">Website</a> · <a href="#" style="color:#1976d2;">Directions</a>
+        </div>
+        <div style="margin-bottom: 1.2rem;">
+          <strong>Re-vaahan Recyclers Pvt. Ltd</strong><br>
+          <span>No reviews · Recycling center</span><br>
+          <span>Shop 4/5, Vedbhumi builder, Bhumi Arcade</span><br>
+          <span>Open ⋅ Closes 8 pm</span><br>
+          <a href="#" style="color:#1976d2;">Directions</a>
+        </div>
+        <div style="margin-bottom: 1.2rem;">
+          <strong>Nagpur Scrap Buyer</strong><br>
+          <span>5.0 (32) · Kabadiwala & Scrap Merchant</span><br>
+          <span>P292, Kalamna Market Rd</span><br>
+          <span>Open ⋅ Closes 7 pm · <a href="tel:08956141444">089561 41444</a></span><br>
+          <span style="color: #2E7D32; font-weight: 500;">Great service</span><br>
+          <a href="#" style="color:#1976d2;">Directions</a>
+        </div>
+        <div style="margin-bottom: 1.2rem;">
+          <strong>MS Scrap and e waste</strong><br>
+          <span>No reviews · Recycling center</span><br>
+          <span>Diwan Shah</span><br>
+          <span>Open 24 hours</span><br>
+          <a href="#" style="color:#1976d2;">Directions</a>
+        </div>
+        <div style="margin-bottom: 1.2rem;">
+          <strong>Madan Gruh Udyog</strong><br>
+          <span>5.0 (9) · Recycling center</span><br>
+          <span>Madan Gruh Udyog, Shantinagar Colony Road, Old Kamptee Rd</span><br>
+          <span>Open ⋅ Closes 7:30 pm · <a href="tel:07122761204">0712 276 1204</a></span><br>
+          <span>In-store shopping · Kerbside pickup · Delivery</span><br>
+          <a href="#" style="color:#1976d2;">Directions</a>
+        </div>
+        <div style="margin-bottom: 1.2rem;">
+          <strong>Dikshita Traders</strong><br>
+          <span>5.0 (2) · Kabadiwala & Scrap Merchant</span><br>
+          <span>P no 111 mehar nagar wathoda chandmari mandir</span><br>
+          <span>Open ⋅ Closes 10 pm · <a href="tel:08625008680">086250 08680</a></span><br>
+          <a href="#" style="color:#1976d2;">Directions</a>
+        </div>
+        <div style="margin-bottom: 1.2rem;">
+          <strong>Waste Recycle Power Plant, Pardi, Nagpur</strong><br>
+          <span>3.6 (28) · Sewage treatment plant</span><br>
+          <span>Nagpur, Maharashtra</span><br>
+          <span>Open 24 hours</span><br>
+          <span style="color: #2E7D32; font-weight: 500;">At Bhandewadi in Nagpur 130MLD capacity sewage treatment plant is started.</span><br>
+          <a href="#" style="color:#1976d2;">Directions</a>
+        </div>
+        <div style="margin-bottom: 1.2rem;">
+          <strong>My Bhangarwala</strong><br>
+          <span>2.3 (6) · Kabadiwala & Scrap Merchant</span><br>
+          <span>48 saket nagar, square</span><br>
+          <span>Closes soon ⋅ 6 pm · <a href="tel:08408900003">084089 00003</a></span><br>
+          <span style="color: #2E7D32; font-weight: 500;">Good Service</span><br>
+          <a href="#" style="color:#1976d2;">Directions</a>
+        </div>
+        <div style="margin-bottom: 1.2rem;">
+          <strong>Recycling Plant</strong><br>
+          <span>4.0 (7) · Recycling center</span><br>
+          <span>15, Budhawar Bazar Rd</span><br>
+          <span style="color: #b71c1c;">Permanently closed</span><br>
+          <a href="#" style="color:#1976d2;">Directions</a>
+        </div>
+        <div style="margin-bottom: 1.2rem;">
+          <strong>Rokade Brothers Water</strong><br>
+          <span>5.0 (1) · Bottle & can redemption center</span><br>
+          <span>44VC+GXC, old bagadganj dhawade mohalla</span><br>
+          <span style="color: #b71c1c;">Temporarily closed</span><br>
+          <a href="#" style="color:#1976d2;">Directions</a>
+        </div>
+        <div style="margin-bottom: 1.2rem;">
+          <strong>Balaji Waste Paper</strong><br>
+          <span>No reviews · Recycling center</span><br>
+          <span>Kapas gali shop, number 5, near, Ghat Rd</span><br>
+          <span style="color: #b71c1c;">Temporarily closed · <a href="tel:07020242501">070202 42501</a></span><br>
+          <a href="#" style="color:#1976d2;">Directions</a>
+        </div>
+        <div style="margin-bottom: 1.2rem;">
+          <strong>MAHARASTRA TRADING</strong><br>
+          <span>3.0 (1) · Junkyard</span><br>
+          <span>Nagpur, Maharashtra</span><br>
+          <span style="color: #b71c1c;">Temporarily closed · <a href="tel:09049170270">090491 70270</a></span><br>
+          <a href="#" style="color:#1976d2;">Directions</a>
+        </div>
+        <div style="margin-bottom: 1.2rem;">
+          <strong>Zone 7, Lakad Ganj, Infront Gillor Gate, Dipti Signal, Nagpur.</strong><br>
+          <span>5.0 (1) · Garbage dump</span><br>
+          <span>545M+RP9, Dipti Signal Rd</span><br>
+          <span style="color: #b71c1c;">Temporarily closed</span><br>
+          <a href="#" style="color:#1976d2;">Directions</a>
+        </div>
+      </div>
+    `;
+    mapDiv.style.display = 'block';
+    if(window.leafletMap) {
+      window.leafletMap.remove();
+    }
+    window.leafletMap = L.map('leaflet-map').setView([21.1458, 79.0882], 14);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '© OpenStreetMap'
+    }).addTo(window.leafletMap);
+    L.marker([21.1458, 79.0882]).addTo(window.leafletMap)
+      .bindPopup('You are here').openPopup();
+    L.marker([21.1458+0.01, 79.0882+0.01]).addTo(window.leafletMap)
+      .bindPopup('Green Earth Recycling Center');
+    L.marker([21.1458-0.008, 79.0882+0.012]).addTo(window.leafletMap)
+      .bindPopup('City E-Waste Drop-off');
+    L.marker([21.1458+0.012, 79.0882-0.009]).addTo(window.leafletMap)
+      .bindPopup('Municipal Garbage Collection Spot');
+  }
+
+  // Bulk Waste Pickup Request (Demo)
+  function submitPickupRequest() {
+    var address = document.getElementById('pickup-address').value;
+    var type = document.getElementById('waste-type').value;
+    var date = document.getElementById('pickup-date').value;
+    if(address && type && date) {
+      document.getElementById('pickup-success').innerHTML = '✅ Pickup request submitted! Your municipality will contact you soon.';
+      setTimeout(function(){ document.getElementById('pickup-success').innerHTML = ''; }, 5000);
+    }
+    return false;
+  }
+</script>
+
+{% endblock %}
+

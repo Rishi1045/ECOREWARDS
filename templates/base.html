@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Eco Rewards</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+  <!-- Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+
+  <style>
+    :root {
+      --primary-color: #219150;
+      --secondary-color: #43b97f;
+      --navbar-bg: #E8F5E9; /* Eco light green */
+      --navbar-text: #1B5E20; /* Deep eco green */
+      --page-bg: #f4f6f8;
+      --card-bg: #fff;
+      --accent: #219150;
+      --border-color: #e5e7eb;
+      --base-font-size: 18px;
+    }
+
+    body {
+      background-color: var(--page-bg);
+      font-size: var(--base-font-size);
+      font-family: 'Poppins', sans-serif;
+      color: #23272a;
+      margin: 0;
+    }
+
+    .topnav {
+      background-color: var(--navbar-bg);
+      color: var(--navbar-text);
+      padding: 18px 0 18px 0;
+      box-shadow: 0 2px 8px rgba(33,145,80,0.07);
+      border: none;
+      margin: 0;
+      border-radius: 0 0 10px 10px;
+    }
+
+    .topnav a {
+      color: var(--navbar-text);
+      text-decoration: none;
+      padding: 12px 32px;
+      display: inline-block;
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      transition: all 0.3s ease;
+    }
+
+    .topnav a:hover {
+      color: var(--primary-color);
+      background: rgba(33,145,80,0.08);
+      border-radius: 6px;
+    }
+
+    .container {
+      max-width: 1200px;
+    }
+
+    h2, h3, h4 {
+      color: var(--dark-color);
+      margin: 15px 0;
+    }
+
+    h2 {
+      font-size: 28px;
+      font-weight: 600;
+    }
+
+    h3 {
+      font-size: 24px;
+      font-weight: 600;
+    }
+
+    h4 {
+      font-size: 16px;
+      line-height: 1.6;
+      font-weight: 400;
+    }
+
+    .classy_frame {
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 25px;
+      background-color: #ffffff;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .classy_frame:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+    }
+
+    hr {
+      border-top: 1px solid var(--border-color);
+      margin: 30px 0;
+    }
+
+    .image-upload {
+      position: relative;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .image-upload img {
+      width: 60px;
+      margin: 10px 0;
+      transition: transform 0.3s ease;
+    }
+
+    .image-upload:hover img {
+      transform: scale(1.1);
+    }
+
+    .image-upload > input {
+      display: none;
+    }
+
+    .classify-button {
+      background-color: var(--primary-color);
+      color: #ffffff;
+      border: none;
+      padding: 14px 30px;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .classify-button:hover {
+      background-color: var(--secondary-color);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    #upload-web, #upload-mobile {
+      color: #6b7280;
+      font-size: 14px;
+      margin-top: 10px;
+    }
+
+    #upload-mobile {
+      display: none;
+    }
+
+    #logo-img {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--navbar-text);
+      margin: 0;
+      letter-spacing: 1px;
+      text-shadow: 0 2px 8px rgba(33,145,80,0.04);
+    }
+
+    #loading {
+      background: rgba(0, 0, 0, 0.85);
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      z-index: 9999;
+      display: none;
+      color: #ffffff;
+      text-align: center;
+      padding-top: 20%;
+      font-size: 18px;
+    }
+
+    .loading-spinner {
+      width: 50px;
+      height: 50px;
+      border: 5px solid #f3f3f3;
+      border-top: 5px solid var(--primary-color);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 20px auto;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    footer {
+      background-color: var(--dark-color);
+      color: #e5e7eb;
+      padding: 30px 0;
+      margin-top: 40px;
+    }
+
+    footer a {
+      color: #9ca3af;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    footer a:hover {
+      color: #e5e7eb;
+    }
+
+    .modal-content {
+      border-radius: 12px;
+      border: none;
+    }
+
+    .modal-header {
+      border-bottom: 1px solid var(--border-color);
+      padding: 20px;
+    }
+
+    .modal-body {
+      padding: 20px;
+    }
+
+    .modal-footer {
+      border-top: 1px solid var(--border-color);
+      padding: 20px;
+    }
+
+    .btn-close {
+      background: none;
+      border: none;
+      font-size: 24px;
+      color: #6b7280;
+      cursor: pointer;
+      transition: color 0.3s ease;
+    }
+
+    .btn-close:hover {
+      color: var(--text-color);
+    }
+
+    @media screen and (max-width: 600px) {
+      h2 { font-size: 22px; }
+      h3 { font-size: 18px; }
+      h4 { font-size: 14px; }
+      .image-upload img { width: 45px; }
+      .classify-button { 
+        font-size: 14px; 
+        padding: 12px 25px;
+        width: 100%;
+      }
+      #upload-web { display: none; }
+      #upload-mobile { display: block; }
+      #logo-img { font-size: 28px; }
+      .classy_frame {
+        padding: 15px;
+      }
+      .topnav a {
+        font-size: 1.1rem;
+        padding: 10px 10px;
+      }
+      .navbar-brand {
+        font-size: 1.5rem;
+      }
+    }
+
+    .navbar-right {
+      float: right;
+    }
+
+    .navbar-right a {
+      margin-left: 15px;
+      font-weight: 500;
+    }
+
+    .navbar-right a:hover {
+      color: var(--primary-color);
+    }
+
+    .navbar-brand {
+      font-size: 2.5rem;
+      font-weight: 900;
+      color: var(--navbar-text);
+      text-decoration: none;
+      letter-spacing: 2px;
+    }
+
+    .navbar-brand:hover {
+      color: var(--accent);
+    }
+
+    #chatbot-widget {
+      position: fixed;
+      bottom: 32px;
+      right: 32px;
+      z-index: 9999;
+    }
+    #chatbot-btn {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: #009688;
+      color: #fff;
+      border: none;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+      font-size: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    #chatbot-btn:hover {
+      background: #00796b;
+    }
+    #chatbot-window {
+      display: none;
+      flex-direction: column;
+      position: absolute;
+      bottom: 70px;
+      right: 0;
+      width: 320px;
+      max-height: 420px;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+      overflow: hidden;
+    }
+    #chatbot-header {
+      background: #009688;
+      color: #fff;
+      padding: 0.8rem 1.2rem;
+      font-weight: 600;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    #chatbot-close {
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 1.2rem;
+      cursor: pointer;
+    }
+    #chatbot-messages {
+      flex: 1;
+      padding: 1rem;
+      overflow-y: auto;
+      background: #f7f7f7;
+      font-size: 0.98rem;
+    }
+    #chatbot-input-row {
+      display: flex;
+      border-top: 1px solid #eee;
+      background: #fafafa;
+    }
+    #chatbot-input {
+      flex: 1;
+      border: none;
+      padding: 0.7rem 1rem;
+      font-size: 1rem;
+      outline: none;
+      background: #fafafa;
+    }
+    #chatbot-send {
+      background: #009688;
+      color: #fff;
+      border: none;
+      padding: 0 1.2rem;
+      font-size: 1.2rem;
+      cursor: pointer;
+      border-radius: 0 0 16px 0;
+      transition: background 0.2s;
+    }
+    #chatbot-send:hover {
+      background: #00796b;
+    }
+    .chatbot-msg {
+      margin-bottom: 0.7rem;
+      display: flex;
+    }
+    .chatbot-msg.user {
+      justify-content: flex-end;
+    }
+    .chatbot-msg.bot {
+      justify-content: flex-start;
+    }
+    .chatbot-bubble {
+      padding: 0.6rem 1rem;
+      border-radius: 16px;
+      max-width: 80%;
+      background: #e0f2f1;
+      color: #222;
+      margin-left: 0.5rem;
+      margin-right: 0.5rem;
+    }
+    .chatbot-msg.user .chatbot-bubble {
+      background: #009688;
+      color: #fff;
+    }
+    .navbar .container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      max-width: 1200px;
+    }
+    .navbar .row {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 0;
+    }
+    .navbar .col-md-3 {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+    }
+    .navbar .col-md-9 {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 2.5rem;
+    }
+    @media (max-width: 900px) {
+      .navbar .col-md-9 a {
+        padding: 10px 12px;
+        font-size: 1rem;
+      }
+      #logo-img {
+        font-size: 2rem;
+      }
+    }
+  </style>
+
+  <link rel="shortcut icon" href="{{ url_for('static', filename='images/favicon.ico') }}" type="image/x-icon">
+  {{ JSGlue.include() }}
+</head>
+<body>
+  <nav class="navbar topnav">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-3">
+          <a href="{{ url_for('home') }}" id="logo-img">EcoRewards</a>
+      </div>
+        <div class="col-md-9 text-end">
+          <a href="{{ url_for('home') }}">Home</a>
+          <a href="{{ url_for('dashboard') }}">Dashboard</a>
+          <a href="{{ url_for('realtime') }}">Real-time</a>
+          <a href="{{ url_for('multi_waste') }}">Multi-Waste</a>
+          <a href="{{ url_for('logout') }}">Logout</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div id="loading">
+    <div class="loading-spinner"></div>
+    <h3>Processing your waste classification...</h3>
+    <p>Please wait while we analyze your image</p>
+  </div>
+
+  <div class="modal fade" id="errorPopup" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <p class="modal-title" id="errorTitle" style="font-size: 18px; font-weight: 600;">Modal title</p>
+          <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p id="errorMessage" style="font-size: 14px;"></p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn classify-button" data-dismiss="modal">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="chatbot-widget">
+    <button id="chatbot-btn" title="Chat with Gemini AI">💬</button>
+    <div id="chatbot-window">
+      <div id="chatbot-header">
+        <span style="display:flex;align-items:center;gap:8px;">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C7.03 2 2.73 6.11 2.05 11.02C2.02 11.18 2 11.34 2 11.5C2 16.19 6.03 20 12 20C17.97 20 22 16.19 22 11.5C22 6.81 17.97 2 12 2ZM12 18C7.58 18 4 14.97 4 11.5C4 11.34 4.01 11.18 4.03 11.02C4.71 7.11 8.03 4 12 4C15.97 4 19.29 7.11 19.97 11.02C19.99 11.18 20 11.34 20 11.5C20 14.97 16.42 18 12 18Z" fill="#2ecc71"/></svg>
+          Eco Rewards
+        </span>
+        <button id="chatbot-close">&times;</button>
+      </div>
+      <div id="chatbot-messages"></div>
+      <form id="chatbot-input-row" autocomplete="off">
+        <input id="chatbot-input" type="text" placeholder="Type a message..." required />
+        <button id="chatbot-send" type="submit">➤</button>
+      </form>
+    </div>
+  </div>
+
+  {% block content %}
+  {% endblock %}
+
+  <script>
+  const chatbotBtn = document.getElementById('chatbot-btn');
+  const chatbotWindow = document.getElementById('chatbot-window');
+  const chatbotClose = document.getElementById('chatbot-close');
+  const chatbotMessages = document.getElementById('chatbot-messages');
+  const chatbotInputRow = document.getElementById('chatbot-input-row');
+  const chatbotInput = document.getElementById('chatbot-input');
+
+  chatbotBtn.onclick = () => {
+    chatbotWindow.style.display = 'flex';
+    chatbotBtn.style.display = 'none';
+    chatbotInput.focus();
+  };
+  chatbotClose.onclick = () => {
+    chatbotWindow.style.display = 'none';
+    chatbotBtn.style.display = 'flex';
+  };
+  chatbotInputRow.onsubmit = async (e) => {
+    e.preventDefault();
+    const msg = chatbotInput.value.trim();
+    if (!msg) return;
+    appendMsg('user', msg);
+    chatbotInput.value = '';
+    appendMsg('bot', '<span style="color:#888">...</span>');
+    chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+    try {
+      const res = await fetch('/chatbot', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({message: msg})
+      });
+      const data = await res.json();
+      chatbotMessages.removeChild(chatbotMessages.lastChild);
+      appendMsg('bot', data.reply);
+      chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+    } catch {
+      chatbotMessages.removeChild(chatbotMessages.lastChild);
+      appendMsg('bot', '<span style="color:red">Error. Try again.</span>');
+    }
+  };
+  function appendMsg(sender, text) {
+    const msgDiv = document.createElement('div');
+    msgDiv.className = 'chatbot-msg ' + sender;
+    const bubble = document.createElement('div');
+    bubble.className = 'chatbot-bubble';
+    bubble.innerHTML = text;
+    msgDiv.appendChild(bubble);
+    chatbotMessages.appendChild(msgDiv);
+  }
+  </script>
+</body>
+</html>

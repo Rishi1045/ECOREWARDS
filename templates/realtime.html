@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+.realtime-container {
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2.5rem 0;
+}
+#realtime-title {
+  font-size: 2.1rem;
+  font-weight: 800;
+  margin-bottom: 1.5rem;
+  color: #009688;
+}
+#webcam-box {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+  padding: 2rem 2.5rem 1.5rem 2.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+#webcam-video {
+  border-radius: 12px;
+  background: #222;
+  width: 380px;
+  height: 285px;
+  object-fit: cover;
+  margin-bottom: 1.2rem;
+}
+#start-btn {
+  background: #009688;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.8rem 2.2rem;
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 1.2rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+#start-btn:hover {
+  background: #00796b;
+}
+#prediction-label {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #222;
+  margin-top: 0.7rem;
+  min-height: 2.2rem;
+}
+</style>
+<div class="realtime-container">
+  <div id="realtime-title">Realtime Waste Classification</div>
+  <div id="webcam-box">
+    <video id="webcam-video" autoplay playsinline></video>
+    <button id="start-btn">Start Classification</button>
+    <div id="prediction-label">Prediction: <span id="prediction-result">-</span></div>
+  </div>
+</div>
+<script>
+let streaming = false;
+let intervalId = null;
+const video = document.getElementById('webcam-video');
+const startBtn = document.getElementById('start-btn');
+const predictionResult = document.getElementById('prediction-result');
+
+async function setupWebcam() {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    video.srcObject = stream;
+  } catch (err) {
+    alert('Could not access webcam.');
+  }
+}
+setupWebcam();
+
+startBtn.onclick = function() {
+  if (!streaming) {
+    startBtn.textContent = 'Stop Classification';
+    streaming = true;
+    intervalId = setInterval(sendFrame, 800); // Send frame every 800ms
+  } else {
+    startBtn.textContent = 'Start Classification';
+    streaming = false;
+    clearInterval(intervalId);
+    predictionResult.textContent = '-';
+  }
+};
+
+async function sendFrame() {
+  if (!streaming) return;
+  const canvas = document.createElement('canvas');
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+  const dataUrl = canvas.toDataURL('image/jpeg');
+  try {
+    const res = await fetch('/realtime_predict', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ image: dataUrl })
+    });
+    const data = await res.json();
+    predictionResult.textContent = data.label + (data.confidence ? ` (${data.confidence})` : '');
+  } catch {
+    predictionResult.textContent = 'Error';
+  }
+}
+</script>
+{% endblock %} 

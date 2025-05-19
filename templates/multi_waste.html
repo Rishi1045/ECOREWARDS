@@ -1,0 +1,580 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card eco-card">
+                <div class="card-header eco-header">
+                    <h3 class="text-center mb-0">
+                        <i class="fas fa-leaf me-2"></i>Multi-Waste Classification
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <!-- Mode Selection -->
+                    <div class="text-center mb-4">
+                        <div class="btn-group eco-btn-group" role="group">
+                            <button type="button" class="btn eco-btn active" id="imageMode">
+                                <i class="fas fa-image me-2"></i>Image Upload
+                            </button>
+                            <button type="button" class="btn eco-btn" id="webcamMode">
+                                <i class="fas fa-camera me-2"></i>Webcam
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Image Upload Section -->
+                    <div id="imageSection">
+                        <div class="text-center mb-4">
+                            <div id="drop-zone" class="eco-drop-zone">
+                                <i class="fas fa-cloud-upload-alt fa-3x mb-3"></i>
+                                <p class="mb-0">Drag and drop an image here or click to select</p>
+                                <input type="file" id="file-input" accept="image/*" class="d-none">
+                            </div>
+                            <button id="classify-btn" class="btn eco-btn-primary" disabled>
+                                <i class="fas fa-search me-2"></i> Classify Waste
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Webcam Section -->
+                    <div id="webcamSection" class="d-none">
+                        <div class="text-center mb-4">
+                            <div class="webcam-container">
+                                <video id="webcam" class="eco-webcam" autoplay playsinline></video>
+                                <div id="webcam-overlay" class="d-none">
+                                    <div class="spinner-border text-light" role="status">
+                                        <span class="visually-hidden">Processing...</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="btn-group eco-btn-group mt-3" role="group">
+                                <button id="startWebcam" class="btn eco-btn-success">
+                                    <i class="fas fa-camera me-2"></i> Start Webcam
+                                </button>
+                                <button id="stopWebcam" class="btn eco-btn-danger" disabled>
+                                    <i class="fas fa-stop me-2"></i> Stop Webcam
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Results Section -->
+                    <div id="result-container" class="d-none">
+                        <div class="text-center">
+                            <div class="result-image-container">
+                                <img id="result-image" class="eco-result-image" alt="Detection Result">
+                            </div>
+                            <div id="detection-results" class="mt-4">
+                                <h4 class="eco-title mb-3">
+                                    <i class="fas fa-check-circle me-2"></i>Detected Items
+                                </h4>
+                                <div id="detections-list" class="eco-detections-list"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+:root {
+    --eco-primary: #2E7D32;
+    --eco-primary-light: #4CAF50;
+    --eco-primary-dark: #1B5E20;
+    --eco-secondary: #81C784;
+    --eco-accent: #FFC107;
+    --eco-background: #F1F8E9;
+    --eco-text: #1B5E20;
+    --eco-border: #A5D6A7;
+    --eco-shadow: 0 4px 6px rgba(46, 125, 50, 0.1);
+    --eco-transition: all 0.3s ease;
+}
+
+.eco-card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: var(--eco-shadow);
+    background: white;
+}
+
+.eco-header {
+    background: linear-gradient(135deg, var(--eco-primary) 0%, var(--eco-primary-dark) 100%);
+    color: white;
+    border-radius: 15px 15px 0 0 !important;
+    padding: 1.5rem;
+}
+
+.eco-header h3 {
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.eco-btn-group {
+    background: var(--eco-background);
+    padding: 5px;
+    border-radius: 10px;
+}
+
+.eco-btn {
+    border: none;
+    padding: 10px 20px;
+    font-weight: 500;
+    color: var(--eco-text);
+    transition: var(--eco-transition);
+}
+
+.eco-btn:hover, .eco-btn.active {
+    background: var(--eco-primary);
+    color: white;
+}
+
+.eco-btn-primary {
+    background: var(--eco-primary);
+    color: white;
+    padding: 12px 30px;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: var(--eco-transition);
+}
+
+.eco-btn-primary:hover {
+    background: var(--eco-primary-dark);
+    transform: translateY(-2px);
+}
+
+.eco-btn-success {
+    background: var(--eco-primary-light);
+    color: white;
+}
+
+.eco-btn-danger {
+    background: #E53935;
+    color: white;
+}
+
+.eco-drop-zone {
+    border: 2px dashed var(--eco-border);
+    border-radius: 12px;
+    padding: 2rem;
+    background: var(--eco-background);
+    transition: var(--eco-transition);
+    cursor: pointer;
+}
+
+.eco-drop-zone:hover {
+    border-color: var(--eco-primary);
+    background: #E8F5E9;
+}
+
+.eco-drop-zone i {
+    color: var(--eco-primary);
+}
+
+.webcam-container {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--eco-shadow);
+    max-width: 480px;
+    margin: 0 auto;
+    background: var(--eco-background);
+}
+
+.eco-webcam {
+    width: 100%;
+    height: 360px;
+    object-fit: cover;
+    border-radius: 12px;
+    background: var(--eco-background);
+    transform: scaleX(-1);
+}
+
+#webcam-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+}
+
+.result-image-container {
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--eco-shadow);
+    margin-bottom: 1.5rem;
+}
+
+.eco-result-image {
+    width: 100%;
+    border-radius: 12px;
+}
+
+.eco-title {
+    color: var(--eco-text);
+    font-weight: 600;
+}
+
+.eco-detections-list {
+    display: grid;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.detection-item {
+    background: var(--eco-background);
+    border-radius: 10px;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: var(--eco-transition);
+}
+
+.detection-item:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--eco-shadow);
+}
+
+.detection-item i {
+    color: var(--eco-primary);
+    font-size: 1.5rem;
+}
+
+.detection-info {
+    flex: 1;
+}
+
+.detection-name {
+    font-weight: 600;
+    color: var(--eco-text);
+    margin-bottom: 0.25rem;
+}
+
+.detection-confidence {
+    color: var(--eco-primary-light);
+    font-size: 0.9rem;
+}
+
+.confidence-bar {
+    height: 6px;
+    background: var(--eco-border);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-top: 0.5rem;
+}
+
+.confidence-level {
+    height: 100%;
+    background: var(--eco-primary);
+    border-radius: 3px;
+    transition: width 0.3s ease;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const dropZone = document.getElementById('drop-zone');
+    const fileInput = document.getElementById('file-input');
+    const classifyBtn = document.getElementById('classify-btn');
+    const resultContainer = document.getElementById('result-container');
+    const resultImage = document.getElementById('result-image');
+    const detectionsList = document.getElementById('detections-list');
+    const imageSection = document.getElementById('imageSection');
+    const webcamSection = document.getElementById('webcamSection');
+    const imageModeBtn = document.getElementById('imageMode');
+    const webcamModeBtn = document.getElementById('webcamMode');
+    const startWebcamBtn = document.getElementById('startWebcam');
+    const stopWebcamBtn = document.getElementById('stopWebcam');
+    const webcamVideo = document.getElementById('webcam');
+    const webcamOverlay = document.getElementById('webcam-overlay');
+    
+    let stream = null;
+    let isProcessing = false;
+    let processingTimeout = null;
+    let lastProcessedTime = 0;
+    let processingCanvas = null;
+    let processingContext = null;
+    let frameCount = 0;
+    let isCameraReady = false;
+    const PROCESS_INTERVAL = 2000; // Process every 2 seconds for better accuracy
+    const MIN_FRAME_INTERVAL = 100;
+    const MAX_FRAME_SKIP = 2; // Reduced frame skip for better accuracy
+    const MIN_CONFIDENCE = 0.5; // Minimum confidence threshold
+
+    // Initialize processing canvas once
+    function initProcessingCanvas() {
+        if (!processingCanvas) {
+            processingCanvas = document.createElement('canvas');
+            processingCanvas.width = 480; // Increased for better accuracy
+            processingCanvas.height = 360;
+            processingContext = processingCanvas.getContext('2d', { 
+                alpha: false,
+                willReadFrequently: false
+            });
+        }
+    }
+
+    // Mode switching
+    imageModeBtn.addEventListener('click', () => {
+        imageModeBtn.classList.add('active');
+        webcamModeBtn.classList.remove('active');
+        imageSection.classList.remove('d-none');
+        webcamSection.classList.add('d-none');
+        if (stream) {
+            stopWebcam();
+        }
+    });
+
+    webcamModeBtn.addEventListener('click', () => {
+        webcamModeBtn.classList.add('active');
+        imageModeBtn.classList.remove('active');
+        imageSection.classList.add('d-none');
+        webcamSection.classList.remove('d-none');
+    });
+
+    // Webcam handling
+    startWebcamBtn.addEventListener('click', async () => {
+        try {
+            startWebcamBtn.disabled = true;
+            startWebcamBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Starting Camera...';
+            
+            // First try to get the back camera
+            const constraints = {
+                video: {
+                    width: { ideal: 640, max: 1280 },
+                    height: { ideal: 480, max: 720 },
+                    frameRate: { ideal: 15, max: 30 },
+                    facingMode: { ideal: 'environment' }
+                }
+            };
+
+            try {
+                stream = await navigator.mediaDevices.getUserMedia(constraints);
+            } catch (backCameraError) {
+                console.log('Back camera not available, trying front camera...');
+                // If back camera fails, try front camera
+                constraints.video.facingMode = { ideal: 'user' };
+                stream = await navigator.mediaDevices.getUserMedia(constraints);
+            }
+
+            webcamVideo.srcObject = stream;
+            
+            // Wait for video to be ready
+            await new Promise((resolve) => {
+                webcamVideo.onloadedmetadata = () => {
+                    webcamVideo.play();
+                    resolve();
+                };
+            });
+
+            isCameraReady = true;
+            startWebcamBtn.innerHTML = '<i class="fas fa-camera me-2"></i> Camera Started';
+            stopWebcamBtn.disabled = false;
+            initProcessingCanvas();
+            startProcessing();
+        } catch (err) {
+            console.error('Camera error:', err);
+            alert('Error accessing camera: ' + err.message);
+            startWebcamBtn.disabled = false;
+            startWebcamBtn.innerHTML = '<i class="fas fa-camera me-2"></i> Start Camera';
+        }
+    });
+
+    stopWebcamBtn.addEventListener('click', () => {
+        stopWebcam();
+    });
+
+    function stopWebcam() {
+        if (stream) {
+            stream.getTracks().forEach(track => {
+                track.stop();
+            });
+            webcamVideo.srcObject = null;
+            stream = null;
+        }
+        isCameraReady = false;
+        startWebcamBtn.disabled = false;
+        startWebcamBtn.innerHTML = '<i class="fas fa-camera me-2"></i> Start Camera';
+        stopWebcamBtn.disabled = true;
+        isProcessing = false;
+        if (processingTimeout) {
+            clearTimeout(processingTimeout);
+        }
+        webcamOverlay.classList.add('d-none');
+        frameCount = 0;
+        lastProcessedTime = 0;
+    }
+
+    async function startProcessing() {
+        if (!stream || !isCameraReady) return;
+        isProcessing = true;
+        lastProcessedTime = Date.now();
+        processFrame();
+    }
+
+    async function processFrame() {
+        if (!isProcessing || !isCameraReady) return;
+
+        const now = Date.now();
+        const timeSinceLastProcess = now - lastProcessedTime;
+        frameCount++;
+
+        // Skip processing if not enough time has passed
+        if (timeSinceLastProcess < MIN_FRAME_INTERVAL) {
+            requestAnimationFrame(processFrame);
+            return;
+        }
+
+        // Only process every few frames to reduce load
+        if (frameCount % MAX_FRAME_SKIP !== 0) {
+            requestAnimationFrame(processFrame);
+            return;
+        }
+
+        try {
+            // Only show overlay if we're actually processing
+            if (timeSinceLastProcess >= PROCESS_INTERVAL) {
+                webcamOverlay.classList.remove('d-none');
+                
+                // Draw the current frame to the processing canvas
+                processingContext.drawImage(webcamVideo, 0, 0, processingCanvas.width, processingCanvas.height);
+                
+                // Convert to blob with good quality for accuracy
+                const blob = await new Promise(resolve => 
+                    processingCanvas.toBlob(resolve, 'image/jpeg', 0.85)
+                );
+
+                const formData = new FormData();
+                formData.append('file', blob, 'webcam.jpg');
+                
+                const response = await fetch('/multi-waste-classification', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    // Filter detections by confidence
+                    data.detections = data.detections.filter(det => det.confidence >= MIN_CONFIDENCE);
+                    if (data.detections.length > 0) {
+                        updateResults(data);
+                    }
+                }
+                
+                lastProcessedTime = now;
+                webcamOverlay.classList.add('d-none');
+            }
+            
+            // Schedule next frame
+            requestAnimationFrame(processFrame);
+        } catch (error) {
+            console.error('Error processing webcam:', error);
+            webcamOverlay.classList.add('d-none');
+            // If error occurs, wait a bit before trying again
+            setTimeout(() => requestAnimationFrame(processFrame), 1000);
+        }
+    }
+
+    // Image upload handling
+    dropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropZone.classList.add('dragover');
+    });
+
+    dropZone.addEventListener('dragleave', (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('dragover');
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('dragover');
+        const file = e.dataTransfer.files[0];
+        if (file && file.type.startsWith('image/')) {
+            handleFile(file);
+        }
+    });
+
+    dropZone.addEventListener('click', () => {
+        fileInput.click();
+    });
+
+    fileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            handleFile(file);
+        }
+    });
+
+    function handleFile(file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            resultImage.src = e.target.result;
+            classifyBtn.disabled = false;
+        };
+        reader.readAsDataURL(file);
+    }
+
+    classifyBtn.addEventListener('click', async () => {
+        if (!resultImage.src) return;
+        
+        classifyBtn.disabled = true;
+        classifyBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Processing...';
+        
+        try {
+            const response = await fetch(resultImage.src);
+            const blob = await response.blob();
+            const formData = new FormData();
+            formData.append('file', blob, 'image.jpg');
+            
+            const result = await fetch('/multi-waste-classification', {
+                method: 'POST',
+                body: formData
+            });
+            
+            const data = await result.json();
+            if (data.success) {
+                updateResults(data);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error processing image. Please try again.');
+        } finally {
+            classifyBtn.disabled = false;
+            classifyBtn.innerHTML = '<i class="fas fa-search me-2"></i> Classify Waste';
+        }
+    });
+
+    function updateResults(data) {
+        resultContainer.classList.remove('d-none');
+        resultImage.src = data.image_url;
+        
+        detectionsList.innerHTML = '';
+        data.detections.forEach(detection => {
+            const item = document.createElement('div');
+            item.className = 'detection-item';
+            const confidence = (detection.confidence * 100).toFixed(1);
+            item.innerHTML = `
+                <i class="fas fa-recycle"></i>
+                <div class="detection-info">
+                    <div class="detection-name">${detection.class}</div>
+                    <div class="detection-confidence">Confidence: ${confidence}%</div>
+                    <div class="confidence-bar">
+                        <div class="confidence-level" style="width: ${confidence}%"></div>
+                    </div>
+                </div>
+            `;
+            detectionsList.appendChild(item);
+        });
+    }
+});
+</script>
+{% endblock %} 
