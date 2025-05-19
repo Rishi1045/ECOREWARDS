@@ -37,8 +37,8 @@ Dashboard :
 
 Smart Waste Classification UI :
 
-<img width="1440" alt="Screenshot 2025-05-19 at 5 44 27 PM" src="https://github.com/user-attachments/assets/b22b33b7-cd1f-479e-bb87-4f4e5a4f3d47" />
 <img width="1440" alt="Screenshot 2025-05-19 at 5 44 18 PM" src="https://github.com/user-attachments/assets/3be4b363-0eb3-4d03-a5b7-5d94b98ddfca" />
+<img width="1440" alt="Screenshot 2025-05-19 at 5 44 27 PM" src="https://github.com/user-attachments/assets/b22b33b7-cd1f-479e-bb87-4f4e5a4f3d47" />
 
 
 
@@ -56,8 +56,8 @@ Find Recycling Centers & Bulk Pickup :
 
 Youtube Video Recommendation Of Waste Recycling :
 
-<img width="1440" alt="Screenshot 2025-05-19 at 5 46 09 PM" src="https://github.com/user-attachments/assets/6e56b609-77c8-40f5-bfc2-9c0d31f60541" />
 <img width="1440" alt="Screenshot 2025-05-19 at 5 45 57 PM" src="https://github.com/user-attachments/assets/c8978bf3-f8a1-414f-8135-67fdaf3904b5" />
+<img width="1440" alt="Screenshot 2025-05-19 at 5 46 09 PM" src="https://github.com/user-attachments/assets/6e56b609-77c8-40f5-bfc2-9c0d31f60541" />
 
 
 
@@ -69,8 +69,8 @@ Real-Time Waste Classification :
 
 Multi-Waste Classification :
 
-<img width="1440" alt="Screenshot 2025-05-19 at 5 49 30 PM" src="https://github.com/user-attachments/assets/b85145ab-eeb9-451f-9199-1e89c0d7c121" />
 <img width="1440" alt="Screenshot 2025-05-19 at 5 49 40 PM" src="https://github.com/user-attachments/assets/ddebf537-e5d3-4fc0-a529-95e23246fa3c" />
+<img width="1440" alt="Screenshot 2025-05-19 at 5 49 30 PM" src="https://github.com/user-attachments/assets/b85145ab-eeb9-451f-9199-1e89c0d7c121" />
 
 
 
@@ -80,7 +80,7 @@ ChatBot :
 
 
 
-
+<br><br><br>
 
 
 
