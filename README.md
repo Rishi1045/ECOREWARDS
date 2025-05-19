@@ -101,7 +101,8 @@ cd ECOREWARDS
 -- Set up a virtual environment (optional but recommended):
 
 python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+source venv/bin/activate  
+# On Windows: venv\Scripts\activate
 
 <br>
 
@@ -114,6 +115,7 @@ pip install -r requirements.txt
 -- Set up environment variables (e.g., for API keys, database):
 
 Create a .env file in the root directory.
+
 Add necessary variables (e.g., DATABASE_URL, API_KEY, FLASK_ENV=development).
 
 <br>
@@ -121,7 +123,9 @@ Add necessary variables (e.g., DATABASE_URL, API_KEY, FLASK_ENV=development).
 -- Example .env file:
 
 DATABASE_URL=your_database_url
+
 API_KEY=your_api_key
+
 FLASK_ENV=development
 
 <br>
