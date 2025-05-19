@@ -69,8 +69,8 @@ Welcome to EcoRewards, a web application designed to promote sustainable waste m
 
 # Multi-Waste Classification :
 
-<img width="1440" alt="Screenshot 2025-05-19 at 5 49 40 PM" src="https://github.com/user-attachments/assets/ddebf537-e5d3-4fc0-a529-95e23246fa3c" />
 <img width="1440" alt="Screenshot 2025-05-19 at 5 49 30 PM" src="https://github.com/user-attachments/assets/b85145ab-eeb9-451f-9199-1e89c0d7c121" />
+<img width="1440" alt="Screenshot 2025-05-19 at 5 49 40 PM" src="https://github.com/user-attachments/assets/ddebf537-e5d3-4fc0-a529-95e23246fa3c" />
 
 <br>
 
