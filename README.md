@@ -78,6 +78,15 @@ Welcome to EcoRewards, a web application designed to promote sustainable waste m
 
 <img width="317" alt="Screenshot 2025-05-19 at 5 50 06 PM" src="https://github.com/user-attachments/assets/acd83670-4001-4ee4-8381-ad206e888695" />
 
+<br>
+
+# Demo
+
+
+
+https://github.com/user-attachments/assets/28e9c45b-cf1f-4cd5-8be3-9249a5df919e
+
+
 
 
 <br><br><br><br>
