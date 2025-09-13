@@ -64,4 +64,32 @@ var/
 wheels/
 *.egg-info/
 .installed.cfg
-*.egg 
+*.egg
+
+# ML Models and large files (exclude specific needed models)
+*.pkl
+*.joblib
+*.model
+# Keep classifyWaste.h5 - it's needed for the app
+!classifyWaste.h5
+!src/backend/ml_models/classifyWaste.h5
+
+# Temporary uploads
+uploads/
+temp/
+tmp/
+
+# Logs
+*.log
+logs/
+
+# Database
+*.db
+*.sqlite3
+
+# Node modules (if any frontend dependencies)
+node_modules/
+
+# OS generated files
+Thumbs.db
+.DS_Store

@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Eco Rewards</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'eco-primary': '#059669',
+            'eco-secondary': '#10b981',
+            'eco-light': '#d1fae5',
+            'eco-dark': '#064e3b',
+            'eco-accent': '#34d399'
+          },
+          fontFamily: {
+            'eco': ['Poppins', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <!-- Animate CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+
+
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+    }
+  </style>
+
+  <link rel="shortcut icon" href="{{ url_for('static', filename='images/favicon.ico') }}" type="image/x-icon">
+</head>
+<body>
+  <!-- Modern Navigation -->
+  <nav class="bg-gradient-to-r from-eco-primary to-eco-secondary shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-16">
+        <!-- Logo -->
+        <div class="flex items-center">
+          <a href="{{ url_for('main.home') }}" class="flex items-center space-x-2">
+            <i class="fas fa-leaf text-white text-2xl"></i>
+            <span class="text-white text-2xl font-bold tracking-wide">EcoRewards</span>
+          </a>
+        </div>
+        
+        <!-- Desktop Navigation -->
+        <div class="hidden md:block">
+          <div class="ml-10 flex items-baseline space-x-4">
+            <a href="{{ url_for('main.home') }}" class="text-white hover:bg-white hover:bg-opacity-20 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200">
+              <i class="fas fa-home mr-2"></i>Home
+            </a>
+            <a href="{{ url_for('main.dashboard') }}" class="text-white hover:bg-white hover:bg-opacity-20 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200">
+              <i class="fas fa-chart-line mr-2"></i>Dashboard
+            </a>
+            <a href="{{ url_for('waste.realtime') }}" class="text-white hover:bg-white hover:bg-opacity-20 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200">
+              <i class="fas fa-video mr-2"></i>Real-time
+            </a>
+            <a href="{{ url_for('waste.multi_waste') }}" class="text-white hover:bg-white hover:bg-opacity-20 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200">
+              <i class="fas fa-images mr-2"></i>Multi-Waste
+            </a>
+            <a href="{{ url_for('auth.logout') }}" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md text-sm font-medium transition-all duration-200">
+              <i class="fas fa-sign-out-alt mr-2"></i>Logout
+            </a>
+          </div>
+        </div>
+        
+        <!-- Mobile menu button -->
+        <div class="md:hidden">
+          <button type="button" class="text-white hover:bg-white hover:bg-opacity-20 inline-flex items-center justify-center p-2 rounded-md focus:outline-none" id="mobile-menu-button">
+            <i class="fas fa-bars text-xl"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Mobile Navigation -->
+    <div class="md:hidden hidden" id="mobile-menu">
+      <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-eco-dark">
+        <a href="{{ url_for('main.home') }}" class="text-white hover:bg-eco-primary block px-3 py-2 rounded-md text-base font-medium">
+          <i class="fas fa-home mr-2"></i>Home
+        </a>
+        <a href="{{ url_for('main.dashboard') }}" class="text-white hover:bg-eco-primary block px-3 py-2 rounded-md text-base font-medium">
+          <i class="fas fa-chart-line mr-2"></i>Dashboard
+        </a>
+        <a href="{{ url_for('waste.realtime') }}" class="text-white hover:bg-eco-primary block px-3 py-2 rounded-md text-base font-medium">
+          <i class="fas fa-video mr-2"></i>Real-time
+        </a>
+        <a href="{{ url_for('waste.multi_waste') }}" class="text-white hover:bg-eco-primary block px-3 py-2 rounded-md text-base font-medium">
+          <i class="fas fa-images mr-2"></i>Multi-Waste
+        </a>
+        <a href="{{ url_for('auth.logout') }}" class="bg-red-500 hover:bg-red-600 text-white block px-3 py-2 rounded-md text-base font-medium">
+          <i class="fas fa-sign-out-alt mr-2"></i>Logout
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <div id="loading" style="display: none;">
+    <div class="loading-spinner"></div>
+    <h3>Processing your waste classification...</h3>
+    <p>Please wait while we analyze your image</p>
+  </div>
+
+  <div class="modal fade" id="errorPopup" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <p class="modal-title" id="errorTitle" style="font-size: 18px; font-weight: 600;">Modal title</p>
+          <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p id="errorMessage" style="font-size: 14px;"></p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn classify-button" data-dismiss="modal">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chatbot Widget -->
+  <div id="chatbot-widget" class="fixed bottom-4 right-4 z-50">
+    <button id="chatbot-btn" class="bg-eco-primary hover:bg-eco-secondary text-white p-3 rounded-full shadow-lg transition-all duration-300" title="Chat with Eco Assistant">
+      💬
+    </button>
+    <div id="chatbot-window" class="hidden absolute bottom-16 right-0 w-80 h-96 bg-white rounded-lg shadow-xl border border-gray-200">
+      <div id="chatbot-header" class="bg-eco-primary text-white p-3 rounded-t-lg flex justify-between items-center">
+        <span class="flex items-center gap-2 text-sm font-medium">
+          🌱 Eco Assistant
+        </span>
+        <button id="chatbot-close" class="text-white hover:text-gray-200 text-lg">&times;</button>
+      </div>
+      <div id="chatbot-messages" class="h-64 overflow-y-auto p-3 text-sm"></div>
+      <form id="chatbot-input-row" class="p-3 border-t border-gray-200 flex gap-2" autocomplete="off">
+        <input id="chatbot-input" type="text" placeholder="Type a message..." class="flex-1 px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-eco-primary" required />
+        <button id="chatbot-send" type="submit" class="bg-eco-primary hover:bg-eco-secondary text-white px-3 py-2 rounded-md text-sm">➤</button>
+      </form>
+    </div>
+  </div>
+
+  {% block content %}
+  {% endblock %}
+
+  <script>
+  const chatbotBtn = document.getElementById('chatbot-btn');
+  const chatbotWindow = document.getElementById('chatbot-window');
+  const chatbotClose = document.getElementById('chatbot-close');
+
+  const chatbotMessages = document.getElementById('chatbot-messages');
+  const chatbotInputRow = document.getElementById('chatbot-input-row');
+  const chatbotInput = document.getElementById('chatbot-input');
+
+  chatbotBtn.addEventListener('click', () => {
+    chatbotWindow.classList.toggle('hidden');
+    if (!chatbotWindow.classList.contains('hidden')) {
+      chatbotInput.focus();
+    }
+  });
+
+  chatbotClose.addEventListener('click', () => {
+    chatbotWindow.classList.add('hidden');
+  });
+  chatbotInputRow.onsubmit = async (e) => {
+    e.preventDefault();
+    const msg = chatbotInput.value.trim();
+    if (!msg) return;
+    appendMsg('user', msg);
+    chatbotInput.value = '';
+    appendMsg('bot', '<span style="color:#888">...</span>');
+    chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+    try {
+      const res = await fetch('/chatbot', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({message: msg})
+      });
+      const data = await res.json();
+      chatbotMessages.removeChild(chatbotMessages.lastChild);
+      appendMsg('bot', data.reply);
+      chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+    } catch {
+      chatbotMessages.removeChild(chatbotMessages.lastChild);
+      appendMsg('bot', '<span style="color:red">Error. Try again.</span>');
+    }
+  };
+  function appendMsg(sender, text) {
+    const msgDiv = document.createElement('div');
+    msgDiv.className = 'chatbot-msg ' + sender;
+    const bubble = document.createElement('div');
+    bubble.className = 'chatbot-bubble';
+    bubble.innerHTML = text;
+    msgDiv.appendChild(bubble);
+    chatbotMessages.appendChild(msgDiv);
+  }
+  </script>
+</body>
+</html>

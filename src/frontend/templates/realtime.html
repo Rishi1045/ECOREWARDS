@@ -1,0 +1,237 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-eco-light via-green-50 to-emerald-100">
+  <!-- Header Section -->
+  <div class="bg-white shadow-lg border-b border-eco-primary/10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div class="text-center">
+        <h1 class="text-4xl font-bold text-gray-900 mb-4">
+          <i class="fas fa-video text-eco-primary mr-3"></i>
+          Real-time Waste Classification
+        </h1>
+        <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+          Use your camera to instantly classify waste materials in real-time. Point your camera at any waste item and get immediate classification results.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    
+    <!-- Camera Section -->
+    <div class="bg-white rounded-3xl shadow-2xl border border-eco-primary/10 overflow-hidden">
+      <div class="bg-gradient-to-r from-eco-primary to-eco-secondary p-6">
+        <div class="text-center text-white">
+          <h2 class="text-xl font-bold text-gray-900 mb-3">Live Camera Feed</h2>
+          <p class="opacity-90">Position waste items in front of your camera for classification</p>
+        </div>
+      </div>
+      
+      <div class="p-8">
+        <div class="flex flex-col items-center space-y-6">
+          
+          <!-- Video Container -->
+          <div class="relative bg-gray-900 rounded-2xl overflow-hidden shadow-xl">
+            <video id="webcam-video" 
+                   class="w-96 h-72 md:w-[480px] md:h-[360px] object-cover" 
+                   autoplay playsinline>
+            </video>
+            
+            <!-- Overlay for camera status -->
+            <div id="camera-overlay" class="absolute inset-0 bg-gray-900 flex items-center justify-center text-white">
+              <div class="text-center">
+                <i class="fas fa-camera text-4xl mb-4 opacity-50"></i>
+                <p class="text-lg">Initializing camera...</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Control Button -->
+          <button id="start-btn" 
+                  class="bg-gradient-to-r from-eco-primary to-eco-secondary hover:from-eco-secondary hover:to-eco-primary text-white font-bold py-4 px-8 rounded-xl text-lg transition-all duration-200 transform hover:scale-105 shadow-lg">
+            <i class="fas fa-play mr-2"></i>
+            <span id="btn-text">Start Classification</span>
+          </button>
+
+          <!-- Prediction Results -->
+          <div class="w-full max-w-md">
+            <div class="bg-gray-50 rounded-2xl p-6 border-2 border-dashed border-gray-300">
+              <div class="text-center">
+                <h3 class="text-lg font-semibold text-gray-900 mb-3">Classification Results</h3>
+                <div id="prediction-result" class="text-2xl font-bold text-eco-primary min-h-[2rem]">
+                  Waiting for classification...
+                </div>
+                <div id="confidence-score" class="text-sm text-gray-500 mt-2"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Status Indicator -->
+          <div class="flex items-center space-x-2">
+            <div id="status-indicator" class="w-3 h-3 bg-gray-400 rounded-full"></div>
+            <span id="status-text" class="text-sm text-gray-600">Camera not active</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Instructions -->
+    <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="bg-white rounded-2xl p-6 shadow-lg border border-eco-primary/10">
+        <div class="text-center">
+          <div class="bg-eco-light rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+            <i class="fas fa-camera text-eco-primary text-2xl"></i>
+          </div>
+          <h3 class="font-bold text-gray-900 mb-2">1. Allow Camera Access</h3>
+          <p class="text-gray-600 text-sm">Grant permission to access your camera when prompted by your browser.</p>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-2xl p-6 shadow-lg border border-eco-primary/10">
+        <div class="text-center">
+          <div class="bg-eco-light rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+            <i class="fas fa-play text-eco-primary text-2xl"></i>
+          </div>
+          <h1 class="text-3xl font-bold text-gray-900 mb-6 text-center">Real-time Waste Classification</h1>
+          <p class="text-gray-600 text-sm">Click the start button to begin real-time waste classification.</p>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-2xl p-6 shadow-lg border border-eco-primary/10">
+        <div class="text-center">
+          <div class="bg-eco-light rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+            <i class="fas fa-recycle text-eco-primary text-2xl"></i>
+          </div>
+          <h3 class="font-bold text-gray-900 mb-2">3. Position Items</h3>
+          <p class="text-gray-600 text-sm">Hold waste items in front of the camera for instant classification.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tips Section -->
+    <div class="mt-8 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-200">
+      <div class="flex items-start space-x-3">
+        <div class="bg-blue-100 rounded-full p-2 flex-shrink-0">
+          <i class="fas fa-lightbulb text-blue-600"></i>
+        </div>
+        <div>
+          <h3 class="font-bold text-blue-900 mb-2">Tips for Better Results</h3>
+          <ul class="text-blue-800 text-sm space-y-1">
+            <li>• Ensure good lighting conditions</li>
+            <li>• Hold items steady and close to the camera</li>
+            <li>• Try different angles if classification is uncertain</li>
+            <li>• Clean items provide better recognition accuracy</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+let streaming = false;
+let intervalId = null;
+const video = document.getElementById('webcam-video');
+const startBtn = document.getElementById('start-btn');
+const predictionResult = document.getElementById('prediction-result');
+
+const cameraOverlay = document.getElementById('camera-overlay');
+const btnText = document.getElementById('btn-text');
+const statusIndicator = document.getElementById('status-indicator');
+const statusText = document.getElementById('status-text');
+const confidenceScore = document.getElementById('confidence-score');
+
+async function setupWebcam() {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    video.srcObject = stream;
+    video.onloadedmetadata = () => {
+      cameraOverlay.style.display = 'none';
+      updateStatus('ready', 'Camera ready');
+    };
+  } catch (err) {
+    cameraOverlay.innerHTML = `
+      <div class="text-center">
+        <i class="fas fa-exclamation-triangle text-4xl mb-4 text-red-400"></i>
+        <p class="text-lg">Camera access denied</p>
+        <p class="text-sm opacity-75 mt-2">Please allow camera access and refresh</p>
+      </div>
+    `;
+    updateStatus('error', 'Camera access denied');
+  }
+}
+
+function updateStatus(type, message) {
+  statusText.textContent = message;
+  statusIndicator.className = 'w-3 h-3 rounded-full ' + 
+    (type === 'active' ? 'bg-green-500 animate-pulse' : 
+     type === 'ready' ? 'bg-yellow-500' : 
+     type === 'error' ? 'bg-red-500' : 'bg-gray-400');
+}
+
+setupWebcam();
+
+startBtn.onclick = function() {
+  if (!streaming) {
+    btnText.textContent = 'Stop Classification';
+    startBtn.querySelector('i').className = 'fas fa-stop mr-2';
+    streaming = true;
+    updateStatus('active', 'Classifying...');
+    intervalId = setInterval(sendFrame, 800);
+  } else {
+    btnText.textContent = 'Start Classification';
+    startBtn.querySelector('i').className = 'fas fa-play mr-2';
+    streaming = false;
+    clearInterval(intervalId);
+    predictionResult.textContent = 'Waiting for classification...';
+    confidenceScore.textContent = '';
+    updateStatus('ready', 'Camera ready');
+  }
+};
+
+async function sendFrame() {
+  if (!streaming) return;
+  const canvas = document.createElement('canvas');
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+  const dataUrl = canvas.toDataURL('image/jpeg');
+  
+  try {
+    const res = await fetch('/realtime_predict', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ image: dataUrl })
+    });
+    const data = await res.json();
+    
+    if (data.label) {
+      predictionResult.textContent = data.label;
+      if (data.confidence) {
+        confidenceScore.textContent = `Confidence: ${data.confidence}`;
+      }
+    } else {
+      predictionResult.textContent = 'No waste detected';
+      confidenceScore.textContent = '';
+    }
+  } catch (error) {
+    predictionResult.textContent = 'Classification error';
+    confidenceScore.textContent = 'Please try again';
+    console.error('Classification error:', error);
+  }
+}
+
+// Mobile menu toggle
+document.addEventListener('DOMContentLoaded', function() {
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+    
+    if (mobileMenuButton && mobileMenu) {
+        mobileMenuButton.addEventListener('click', function() {
+            mobileMenu.classList.toggle('hidden');
+        });
+    }
+});
+</script>
+{% endblock %} 

@@ -1,0 +1,287 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-eco-light via-green-50 to-emerald-100">
+  <!-- Hero Section -->
+  <div class="relative overflow-hidden">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <div class="text-center">
+        <h1 class="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
+          Smart Waste <span class="text-eco-primary">Classification</span>
+        </h1>
+        <p class="text-xl text-gray-600 mb-12 max-w-3xl mx-auto">
+          Upload an image of waste and let our AI classify it for proper disposal. 
+          Earn eco-points and make a difference for our planet! 🌍
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Classification Section -->
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+      
+      <!-- Upload Section -->
+      <div class="bg-white rounded-3xl shadow-2xl p-8 border border-eco-primary/10">
+        <div class="text-center mb-8">
+          <div class="mx-auto h-20 w-20 bg-gradient-to-r from-eco-primary to-eco-secondary rounded-full flex items-center justify-center mb-4">
+            <i class="fas fa-camera text-white text-3xl"></i>
+          </div>
+          <h2 class="text-3xl font-bold text-gray-900 mb-2">Upload Waste Image</h2>
+          <p class="text-gray-600">Take a photo or select from gallery</p>
+        </div>
+
+        <!-- Image Upload Area -->
+        <div class="border-2 border-dashed border-eco-primary/30 rounded-2xl p-8 text-center hover:border-eco-primary/60 transition-all duration-300 cursor-pointer" onclick="document.getElementById('file').click()">
+          <div id="upload-area">
+            <i class="fas fa-cloud-upload-alt text-eco-primary text-5xl mb-4"></i>
+            <p class="text-lg font-semibold text-gray-700 mb-2">Click to upload or drag & drop</p>
+            <p class="text-sm text-gray-500">PNG, JPG up to 10MB</p>
+          </div>
+          <div id="preview-area" class="hidden">
+            <img id="preview-image" class="max-w-full h-64 object-contain rounded-lg mx-auto mb-4" alt="Preview">
+            <p class="text-sm text-gray-600">Image ready for classification</p>
+          </div>
+        </div>
+
+        <input type="file" id="file" name="file" accept="image/*" class="hidden" onchange="previewImage()">
+        
+        <!-- Classify Button -->
+        <button onclick="classifyWaste()" id="classify-btn" 
+                class="w-full mt-6 bg-gradient-to-r from-eco-primary to-eco-secondary text-white py-4 px-6 rounded-xl font-semibold text-lg hover:from-eco-secondary hover:to-eco-primary transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled>
+          <i class="fas fa-search mr-2"></i>Classify Waste
+        </button>
+      </div>
+
+      <!-- Results Section -->
+      <div class="bg-white rounded-3xl shadow-2xl p-8 border border-eco-primary/10">
+        <div class="text-center mb-8">
+          <div class="mx-auto h-20 w-20 bg-gradient-to-r from-eco-secondary to-eco-accent rounded-full flex items-center justify-center mb-4">
+            <i class="fas fa-recycle text-white text-3xl"></i>
+          </div>
+          <h2 class="text-3xl font-bold text-gray-900 mb-2">Classification Results</h2>
+          <p class="text-gray-600">AI-powered waste identification</p>
+        </div>
+
+        <!-- Default State -->
+        <div id="default-state" class="text-center py-12">
+          <i class="fas fa-leaf text-eco-primary text-6xl mb-4 opacity-30"></i>
+          <p class="text-gray-500 text-lg">Upload an image to see classification results</p>
+        </div>
+
+        <!-- Results Display -->
+        <div id="results-section" class="hidden">
+          <div class="bg-eco-light rounded-2xl p-6 mb-6">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-xl font-bold text-gray-900">Waste Type:</h3>
+              <span id="waste-type" class="bg-eco-primary text-white px-4 py-2 rounded-full font-semibold"></span>
+            </div>
+            <p id="waste-details" class="text-gray-700 leading-relaxed"></p>
+          </div>
+
+          <!-- Eco Points Earned -->
+          <div class="bg-gradient-to-r from-yellow-400 to-orange-400 rounded-2xl p-6 mb-6 text-white">
+            <div class="flex items-center justify-between">
+              <div>
+                <h4 class="text-lg font-bold mb-1">Eco Points Earned!</h4>
+                <p class="opacity-90">Great job helping the environment</p>
+              </div>
+              <div class="text-right">
+                <div class="text-3xl font-bold">+10</div>
+                <div class="text-sm opacity-90">points</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Educational Videos -->
+          <div id="videos-section" class="space-y-4">
+            <h4 class="text-lg font-bold text-gray-900 mb-4">Learn More:</h4>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <a id="video1-link" href="#" target="_blank" class="block bg-gray-100 rounded-xl p-4 hover:bg-gray-200 transition-colors duration-200">
+                <i class="fas fa-play-circle text-eco-primary text-2xl mb-2"></i>
+                <p class="font-semibold text-gray-800">Recycling Guide</p>
+              </a>
+              <a id="video2-link" href="#" target="_blank" class="block bg-gray-100 rounded-xl p-4 hover:bg-gray-200 transition-colors duration-200">
+                <i class="fas fa-play-circle text-eco-primary text-2xl mb-2"></i>
+                <p class="font-semibold text-gray-800">Disposal Tips</p>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Features Grid -->
+    <div class="mt-20 grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="bg-white rounded-2xl p-8 shadow-xl border border-eco-primary/10 text-center hover:shadow-2xl transition-shadow duration-300">
+        <div class="mx-auto h-16 w-16 bg-eco-light rounded-full flex items-center justify-center mb-6">
+          <i class="fas fa-brain text-eco-primary text-2xl"></i>
+        </div>
+        <h3 class="text-xl font-bold text-gray-900 mb-3">AI-Powered</h3>
+        <p class="text-gray-600">Advanced machine learning algorithms for accurate waste classification</p>
+      </div>
+
+      <div class="bg-white rounded-2xl p-8 shadow-xl border border-eco-primary/10 text-center hover:shadow-2xl transition-shadow duration-300">
+        <div class="mx-auto h-16 w-16 bg-eco-light rounded-full flex items-center justify-center mb-6">
+          <i class="fas fa-bolt text-eco-primary text-2xl"></i>
+        </div>
+        <h3 class="text-xl font-bold text-gray-900 mb-3">Instant Results</h3>
+        <p class="text-gray-600">Get immediate classification results and disposal recommendations</p>
+      </div>
+
+      <div class="bg-white rounded-2xl p-8 shadow-xl border border-eco-primary/10 text-center hover:shadow-2xl transition-shadow duration-300">
+        <div class="mx-auto h-16 w-16 bg-eco-light rounded-full flex items-center justify-center mb-6">
+          <i class="fas fa-award text-eco-primary text-2xl"></i>
+        </div>
+        <h3 class="text-xl font-bold text-gray-900 mb-3">Earn Rewards</h3>
+        <p class="text-gray-600">Collect eco-points for every classification and redeem rewards</p>
+      </div>
+    </div>
+
+    <!-- Call to Action -->
+    <div class="mt-20 text-center">
+      <div class="bg-gradient-to-r from-eco-primary to-eco-secondary rounded-3xl p-12 text-white">
+        <h2 class="text-4xl font-bold mb-4">Ready for More?</h2>
+        <p class="text-xl mb-8 opacity-90">Explore our advanced features for real-time detection</p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <a href="{{ url_for('waste.realtime') }}" 
+             class="bg-white text-eco-primary px-8 py-4 rounded-xl font-semibold hover:bg-gray-100 transition-colors duration-200 inline-flex items-center justify-center">
+            <i class="fas fa-video mr-2"></i>Real-time Detection
+          </a>
+          <a href="{{ url_for('waste.multi_waste') }}" 
+             class="bg-eco-dark text-white px-8 py-4 rounded-xl font-semibold hover:bg-opacity-80 transition-all duration-200 inline-flex items-center justify-center">
+            <i class="fas fa-images mr-2"></i>Multi-Waste Detection
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Loading Overlay -->
+<div id="loading" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 hidden">
+  <div class="bg-white rounded-2xl p-8 text-center max-w-sm mx-4">
+    <div class="animate-spin rounded-full h-16 w-16 border-4 border-eco-primary border-t-transparent mx-auto mb-4"></div>
+    <h3 class="text-xl font-semibold text-gray-900 mb-2">Analyzing Image</h3>
+    <p class="text-gray-600">Our AI is classifying your waste...</p>
+  </div>
+</div>
+
+<script>
+let imgData;
+
+function previewImage() {
+    const file = document.getElementById('file').files[0];
+    const uploadArea = document.getElementById('upload-area');
+    const previewArea = document.getElementById('preview-area');
+    const previewImage = document.getElementById('preview-image');
+    const classifyBtn = document.getElementById('classify-btn');
+    
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            previewImage.src = e.target.result;
+            uploadArea.classList.add('hidden');
+            previewArea.classList.remove('hidden');
+            classifyBtn.disabled = false;
+            classifyBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+function classifyWaste() {
+    const fileInput = document.getElementById('file');
+    const loading = document.getElementById('loading');
+    const defaultState = document.getElementById('default-state');
+    const resultsSection = document.getElementById('results-section');
+    
+    if (!fileInput.files[0]) {
+        alert('Please select an image first!');
+        return;
+    }
+    
+    const formData = new FormData();
+    formData.append('file', fileInput.files[0]);
+    
+    loading.classList.remove('hidden');
+    
+    fetch('/classifywaste', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        loading.classList.add('hidden');
+        
+        if (data.predicted_value) {
+            // Update results
+            document.getElementById('waste-type').textContent = data.predicted_value;
+            document.getElementById('waste-details').textContent = data.details || 'Classification completed successfully.';
+            
+            // Update video links
+            if (data.video1) {
+                document.getElementById('video1-link').href = data.video1;
+            }
+            if (data.video2) {
+                document.getElementById('video2-link').href = data.video2;
+            }
+            
+            // Show results
+            defaultState.classList.add('hidden');
+            resultsSection.classList.remove('hidden');
+            
+            // Scroll to results
+            resultsSection.scrollIntoView({ behavior: 'smooth' });
+            
+            // Show success animation
+            resultsSection.classList.add('animate__animated', 'animate__fadeInUp');
+        } else {
+            alert('Classification failed. Please try again.');
+        }
+    })
+    .catch(error => {
+        loading.classList.add('hidden');
+        console.error('Error:', error);
+        alert('An error occurred. Please try again.');
+    });
+}
+
+// Drag and drop functionality
+const uploadArea = document.querySelector('[onclick="document.getElementById(\'file\').click()"]');
+
+uploadArea.addEventListener('dragover', function(e) {
+    e.preventDefault();
+    this.classList.add('border-eco-primary');
+});
+
+uploadArea.addEventListener('dragleave', function(e) {
+    e.preventDefault();
+    this.classList.remove('border-eco-primary');
+});
+
+uploadArea.addEventListener('drop', function(e) {
+    e.preventDefault();
+    this.classList.remove('border-eco-primary');
+    
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+        document.getElementById('file').files = files;
+        previewImage();
+    }
+});
+
+// Mobile menu toggle (from base template)
+document.addEventListener('DOMContentLoaded', function() {
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+    
+    if (mobileMenuButton && mobileMenu) {
+        mobileMenuButton.addEventListener('click', function() {
+            mobileMenu.classList.toggle('hidden');
+        });
+    }
+});
+</script>
+{% endblock %}

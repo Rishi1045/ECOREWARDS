@@ -1,0 +1,36 @@
+{
+  "name": "ECOREWARDS",
+  "description": "Waste classification and recycling rewards application",
+  "repository": "https://github.com/yourusername/ECOREWARDS",
+  "keywords": ["python", "flask", "tensorflow", "yolo", "waste-classification"],
+  "addons": [
+    "mongolab:sandbox"
+  ],
+  "env": {
+    "FLASK_APP": {
+      "description": "Flask application entry point",
+      "value": "backend.app:app"
+    },
+    "FLASK_ENV": {
+      "description": "Flask environment",
+      "value": "production"
+    },
+    "SECRET_KEY": {
+      "description": "Secret key for Flask session",
+      "generator": "secret"
+    },
+    "MONGODB_URI": {
+      "description": "MongoDB connection string",
+      "value": "mongodb://localhost:27017/ecorewards"
+    },
+    "PYTHONPATH": {
+      "description": "Python path",
+      "value": "/app"
+    }
+  },
+  "buildpacks": [
+    {
+      "url": "heroku/python"
+    }
+  ]
+}

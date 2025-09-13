@@ -1,0 +1,230 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-eco-light via-green-50 to-emerald-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-md w-full space-y-8">
+    {% if is_login %}
+    <!-- Login Form -->
+    <div class="bg-white rounded-2xl shadow-2xl p-8 border border-eco-primary/10">
+      <div class="text-center">
+        <div class="mx-auto h-16 w-16 bg-gradient-to-r from-eco-primary to-eco-secondary rounded-full flex items-center justify-center mb-6">
+          <i class="fas fa-leaf text-white text-2xl"></i>
+        </div>
+        <h2 class="text-3xl font-bold text-gray-900 mb-2">Welcome Back!</h2>
+        <p class="text-gray-600 mb-8">Continue making a difference for our planet 🌍</p>
+      </div>
+
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          {% for message in messages %}
+            <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6 animate__animated animate__fadeIn" role="alert">
+              <div class="flex items-center">
+                <i class="fas fa-exclamation-triangle mr-2"></i>
+                <span>{{ message }}</span>
+              </div>
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+      <form method="POST" action="{{ url_for('auth.login') }}" class="space-y-6">
+        <div>
+          <label for="login-email" class="block text-sm font-semibold text-gray-700 mb-2">Email Address</label>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <i class="fas fa-envelope text-gray-400"></i>
+            </div>
+            <input type="email" id="login-email" name="email" required
+                   class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-eco-primary focus:border-eco-primary transition-all duration-200 text-gray-900 placeholder-gray-500"
+                   placeholder="Enter your email">
+          </div>
+        </div>
+
+        <div>
+          <label for="login-password" class="block text-sm font-semibold text-gray-700 mb-2">Password</label>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <i class="fas fa-lock text-gray-400"></i>
+            </div>
+            <input type="password" id="login-password" name="password" required
+                   class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-eco-primary focus:border-eco-primary transition-all duration-200 text-gray-900 placeholder-gray-500"
+                   placeholder="Enter your password">
+          </div>
+        </div>
+
+        <button type="submit" 
+                class="w-full bg-gradient-to-r from-eco-primary to-eco-secondary text-white py-3 px-4 rounded-lg font-semibold text-lg hover:from-eco-secondary hover:to-eco-primary transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl">
+          <i class="fas fa-sign-in-alt mr-2"></i>Sign In
+        </button>
+      </form>
+
+      <div class="mt-8 text-center">
+        <p class="text-gray-600">Don't have an account? 
+          <a href="{{ url_for('auth.signup') }}" class="font-semibold text-eco-primary hover:text-eco-secondary transition-colors duration-200">
+            Create one here
+          </a>
+        </p>
+      </div>
+    </div>
+
+    {% else %}
+    <!-- Signup Form -->
+    <div class="bg-white rounded-2xl shadow-2xl p-8 border border-eco-primary/10">
+      <div class="text-center">
+        <div class="mx-auto h-16 w-16 bg-gradient-to-r from-eco-primary to-eco-secondary rounded-full flex items-center justify-center mb-6">
+          <i class="fas fa-seedling text-white text-2xl"></i>
+        </div>
+        <h2 class="text-3xl font-bold text-gray-900 mb-2">Join EcoRewards!</h2>
+        <p class="text-gray-600 mb-8">Start your journey to a greener planet 🌱</p>
+      </div>
+
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          {% for message in messages %}
+            <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6 animate__animated animate__fadeIn" role="alert">
+              <div class="flex items-center">
+                <i class="fas fa-exclamation-triangle mr-2"></i>
+                <span>{{ message }}</span>
+              </div>
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+      <form method="POST" action="{{ url_for('auth.signup') }}" class="space-y-6" id="signupForm">
+        <div>
+          <label for="signup-username" class="block text-sm font-semibold text-gray-700 mb-2">Full Name</label>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <i class="fas fa-user text-gray-400"></i>
+            </div>
+            <input type="text" id="signup-username" name="name" required
+                   class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-eco-primary focus:border-eco-primary transition-all duration-200 text-gray-900 placeholder-gray-500"
+                   placeholder="Enter your full name">
+          </div>
+        </div>
+
+        <div>
+          <label for="signup-email" class="block text-sm font-semibold text-gray-700 mb-2">Email Address</label>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <i class="fas fa-envelope text-gray-400"></i>
+            </div>
+            <input type="email" id="signup-email" name="email" required
+                   class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-eco-primary focus:border-eco-primary transition-all duration-200 text-gray-900 placeholder-gray-500"
+                   placeholder="Enter your email">
+          </div>
+        </div>
+
+        <div>
+          <label for="signup-password" class="block text-sm font-semibold text-gray-700 mb-2">Password</label>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <i class="fas fa-lock text-gray-400"></i>
+            </div>
+            <input type="password" id="signup-password" name="password" required
+                   class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-eco-primary focus:border-eco-primary transition-all duration-200 text-gray-900 placeholder-gray-500"
+                   placeholder="Create a strong password">
+          </div>
+          <p class="text-sm text-gray-500 mt-1">Password must be at least 6 characters long</p>
+        </div>
+
+        <div>
+          <label for="signup-confirm-password" class="block text-sm font-semibold text-gray-700 mb-2">Confirm Password</label>
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <i class="fas fa-lock text-gray-400"></i>
+            </div>
+            <input type="password" id="signup-confirm-password" name="confirm_password" required
+                   class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-eco-primary focus:border-eco-primary transition-all duration-200 text-gray-900 placeholder-gray-500"
+                   placeholder="Confirm your password">
+          </div>
+          <p id="password-match-error" class="text-red-500 text-sm mt-1 hidden">Passwords do not match</p>
+        </div>
+
+        <button type="submit" 
+                class="w-full bg-gradient-to-r from-eco-primary to-eco-secondary text-white py-3 px-4 rounded-lg font-semibold text-lg hover:from-eco-secondary hover:to-eco-primary transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl">
+          <i class="fas fa-user-plus mr-2"></i>Create Account
+        </button>
+      </form>
+
+      <div class="mt-8 text-center">
+        <p class="text-gray-600">Already have an account? 
+          <a href="{{ url_for('auth.login') }}" class="font-semibold text-eco-primary hover:text-eco-secondary transition-colors duration-200">
+            Sign in here
+          </a>
+        </p>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Features Section -->
+    <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="text-center">
+        <div class="mx-auto h-12 w-12 bg-eco-light rounded-full flex items-center justify-center mb-3">
+          <i class="fas fa-recycle text-eco-primary text-xl"></i>
+        </div>
+        <h3 class="text-sm font-semibold text-gray-900 mb-1">Smart Classification</h3>
+        <p class="text-xs text-gray-600">AI-powered waste identification</p>
+      </div>
+      <div class="text-center">
+        <div class="mx-auto h-12 w-12 bg-eco-light rounded-full flex items-center justify-center mb-3">
+          <i class="fas fa-coins text-eco-primary text-xl"></i>
+        </div>
+        <h3 class="text-sm font-semibold text-gray-900 mb-1">Earn Rewards</h3>
+        <p class="text-xs text-gray-600">Get points for eco-actions</p>
+      </div>
+      <div class="text-center">
+        <div class="mx-auto h-12 w-12 bg-eco-light rounded-full flex items-center justify-center mb-3">
+          <i class="fas fa-chart-line text-eco-primary text-xl"></i>
+        </div>
+        <h3 class="text-sm font-semibold text-gray-900 mb-1">Track Impact</h3>
+        <p class="text-xs text-gray-600">Monitor your eco-progress</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const signupPassword = document.getElementById('signup-password');
+    const confirmPassword = document.getElementById('signup-confirm-password');
+    const errorMessage = document.getElementById('password-match-error');
+    const signupForm = document.getElementById('signupForm');
+
+    function validatePasswords() {
+        if (confirmPassword.value && signupPassword.value !== confirmPassword.value) {
+            errorMessage.classList.remove('hidden');
+            confirmPassword.classList.add('border-red-500');
+            confirmPassword.classList.remove('border-gray-300');
+        } else {
+            errorMessage.classList.add('hidden');
+            confirmPassword.classList.remove('border-red-500');
+            confirmPassword.classList.add('border-gray-300');
+        }
+    }
+
+    if (signupPassword && confirmPassword) {
+        signupPassword.addEventListener('input', validatePasswords);
+        confirmPassword.addEventListener('input', validatePasswords);
+        
+        signupForm.addEventListener('submit', function(e) {
+            if (signupPassword.value !== confirmPassword.value) {
+                e.preventDefault();
+                errorMessage.classList.remove('hidden');
+            }
+        });
+    }
+
+    // Mobile menu toggle
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+    
+    if (mobileMenuButton && mobileMenu) {
+        mobileMenuButton.addEventListener('click', function() {
+            mobileMenu.classList.toggle('hidden');
+        });
+    }
+});
+</script>
+{% endblock %} 
