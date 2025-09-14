@@ -5,7 +5,7 @@ Users can log activities, earn eco-points, and track their contributions towards
 
 ---
 
-## 🚀 Features
+## 🚀Features
 - User authentication (login/signup)  
 - Dashboard to view eco-points and rewards  
 - Waste classification using CNN  
